@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Background Removal Tool</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .pricing {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pricing span {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .business-options {
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .business-options h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .business-options .options {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .business-options .option {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
+      width: 200px;
+      text-align: center;
+    }
+
+    .business-options .option h3 {
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .business-options .option p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      margin: 2rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-btn {
+      background: #fff;
+      color: #764ba2;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .upload-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .result {
+      margin-top: 2rem;
+    }
+
+    .result img {
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .loading {
+      display: none;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .download-btn {
+      background: #4CAF50;
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      display: none;
+      transition: background 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background: #45a049;
+    }
+
+    .rating {
+      margin-top: 2rem;
+    }
+
+    .rating h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .rating .stars {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .rating .stars span {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #ffd700;
+      transition: color 0.3s ease;
+    }
+
+    .rating .stars span:hover,
+    .rating .stars span.active {
+      color: #ffa500;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Background Removal Tool</h1>
+    <div class="pricing">
+      <span>5$ plan</span>
+      <span>10$ plan</span>
+      <span>15$ plan</span>
+      <span>50$ plan</span>
+    </div>
+  </header>
+
+  <div class="business-options">
+    <h2>Business Options</h2>
+    <div class="options">
+      <div class="option">
+        <h3>Bulk Processing</h3>
+        <p>Process multiple images at once.</p>
+      </div>
+      <div class="option">
+        <h3>Custom Branding</h3>
+        <p>Add your logo and branding to results.</p>
+      </div>
+      <div class="option">
+        <h3>API Access</h3>
+        <p>Integrate our API into your apps.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Remove Background</h2>
+    <p>Upload an image to remove the background instantly.</p>
+    <label for="file-upload" class="upload-btn">Upload Image</label>
+    <input type="file" id="file-upload" accept="image/*">
+    <div class="result">
+      <img id="output-image" src="" alt="Processed Image">
+    </div>
+    <div class="loading">Processing...</div>
+    <button id="download-btn" class="download-btn">Download Image</button>
+  </div>
+
+  <div class="rating">
+    <h3>Rate Us</h3>
+    <div class="stars">
+      <span data-value="1">&#9733;</span>
+      <span data-value="2">&#9733;</span>
+      <span data-value="3">&#9733;</span>
+      <span data-value="4">&#9733;</span>
+      <span data-value="5">&#9733;</span>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('file-upload');
+    const outputImage = document.getElementById('output-image');
+    const loading = document.querySelector('.loading');
+    const downloadBtn = document.getElementById('download-btn');
+
+    fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        loading.classList.add('active');
+        downloadBtn.style.display = 'none';
+        const formData = new FormData();
+        formData.append('image_file', file);
+
+        try {
+          const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+            method: 'POST',
+            headers: {
+              'X-Api-Key': 'qxNQ9CzrniD83pVk8NJ4hBdP', // Your API key
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to remove background');
+          }
+
+          const blob = await response.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          outputImage.src = imageUrl;
+
+          // Enable download button
+          downloadBtn.style.display = 'block';
+          downloadBtn.onclick = () => {
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = 'background-removed.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          };
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to remove background. Please try again.');
+        } finally {
+          loading.classList.remove('active');
+        }
+      }
+    });
+
+    // Rating System
+    const stars = document.querySelectorAll('.rating .stars span');
+    stars.forEach((star) => {
+      star.addEventListener('click', () => {
+        const value = star.getAttribute('data-value');
+        stars.forEach((s) => s.classList.remove('active'));
+        for (let i = 0; i < value; i++) {
+          stars[i].classList.add('active');
+        }
+        alert(`Thank you for rating us ${value} stars!`);
+      });
+    });
+  </script>
+</body>
+</html>
