@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Removal Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            margin: 2rem 0;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            color: #444;
+        }
+
+        p {
+            margin-bottom: 2rem;
+            color: #666;
+        }
+
+        .upload-container {
+            margin-bottom: 2rem;
+        }
+
+        .upload-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .upload-label:hover {
+            background-color: #0056b3;
+        }
+
+        #imageUpload {
+            display: none;
+        }
+
+        .image-preview {
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        #previewImage {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        #removeBgBtn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #removeBgBtn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #removeBgBtn:hover:not(:disabled) {
+            background-color: #218838;
+        }
+
+        .result-container {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        #resultImage {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        #downloadLink {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #17a2b8;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        #downloadLink:hover {
+            background-color: #138496;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 2rem;
+            width: 100%;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .pricing-plans {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .plan {
+            background: #444;
+            padding: 1rem;
+            border-radius: 5px;
+            width: 150px;
+            text-align: center;
+        }
+
+        .plan h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .plan p {
+            margin: 0;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Background Removal Tool</h1>
+        <p>Upload an image to remove the background instantly.</p>
+        <div class="upload-container">
+            <input type="file" id="imageUpload" accept="image/*">
+            <label for="imageUpload" class="upload-label">Choose Image</label>
+        </div>
+        <div class="image-preview" id="imagePreview">
+            <img src="" alt="Image Preview" id="previewImage">
+        </div>
+        <button id="removeBgBtn" disabled>Remove Background</button>
+        <div class="result-container" id="resultContainer">
+            <img src="" alt="Result Image" id="resultImage">
+            <a id="downloadLink" download="background_removed.png">Download Image</a>
+        </div>
+    </div>
+
+    <footer>
+        <h2>Pricing Plans</h2>
+        <div class="pricing-plans">
+            <div class="plan">
+                <h3>$10 Plan</h3>
+                <p>10 Images</p>
+            </div>
+            <div class="plan">
+                <h3>$20 Plan</h3>
+                <p>25 Images</p>
+            </div>
+            <div class="plan">
+                <h3>$30 Plan</h3>
+                <p>50 Images</p>
+            </div>
+            <div class="plan">
+                <h3>$40 Plan</h3>
+                <p>100 Images</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('removeBgBtn').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('removeBgBtn').addEventListener('click', function() {
+            const file = document.getElementById('imageUpload').files[0];
+            if (file) {
+                removeBackground(file);
+            }
+        });
+
+        async function removeBackground(file) {
+            const formData = new FormData();
+            formData.append('image_file', file);
+
+            try {
+                const response = await fetch('https://api.bgremoval.com/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer YOUR_API_KEY_HERE', // Replace with your actual API key
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove background');
+                }
+
+                const blob = await response.blob();
+                const resultImage = document.getElementById('resultImage');
+                resultImage.src = URL.createObjectURL(blob);
+                document.getElementById('resultContainer').style.display = 'block';
+
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = resultImage.src;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to remove background. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
